@@ -1,6 +1,8 @@
 import React, { FC } from "react";
-import styled from "styled-components";
 import Box from "@mui/material/Box";
+
+import Header from "./header";
+import Footer from "./footer";
 
 interface Props {
   children: React.ReactNode;
@@ -9,9 +11,9 @@ interface Props {
 const PageLayout: FC<Props> = ({ children }) => {
   return (
     <Box>
-      <Box>Header</Box>
+      <Header />
       {children}
-      <Box>Footer</Box>
+      <Footer />
     </Box>
   );
 };
