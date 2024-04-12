@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MarryMe
 
-## Getting Started
+MarryMe is an on-chain marriage certificate project build on Sign Protocol. This project is the on-chain attestation version of our existing project [Marry3](https://marry3.love/).
 
-First, run the development server:
+In the real world, if two people in love want to get married, they need to obtain a marriage certificate from a centralized government department. Whether they can get this marriage certificate is determined by the centralized institution, not by the two people in love. In the decentralized network of Web3, we abstract all individuals into addresses. You can choose to marry any one address, and you only need to obtain the other party's consent to obtain your marriage proof, without the need for approval from other third-party centralized institutions. Love is free, equal, and something you can control on your own.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Prerequisites
+
+You need the following installed globally
+
+- Git - https://git-scm.com/downloads
+- Node 18 or above (LTS) - https://nodejs.org/en/
+
+## Installation
+
+Clone this repository using git :
+
+```
+git clone git@github.com:lxdao-official/MarryMe-FrontEnd.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Navigate into the site directory:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+cd MarryMe-FrontEnd
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Install the project's dependencies using npm:
 
-## Learn More
+```
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Developing Locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+From the site root directory:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```
+npm run dev
+```
 
-## Deploy on Vercel
+This site is now running at `http://localhost:3000`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Building
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+From the site root directory:
+
+```
+npm run build
+```
+
+## For Help
+
+If you get anthing wrong or need help on this project, please raise an issue or contact [Muxin](mailto:muxin333333@gmail.com).
