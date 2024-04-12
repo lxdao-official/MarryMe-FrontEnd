@@ -1,0 +1,3 @@
+[submodule "MarryMe-Contract"]
+	path = MarryMe-Contract
+	url = git@github.com:lxdao-official/MarryMe-Contract.git
