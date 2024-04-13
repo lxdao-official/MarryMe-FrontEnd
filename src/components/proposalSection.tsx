@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FC, useState } from "react";
 import { useAccount } from "wagmi";
-import { Box, TextField, Button } from "@mui/material";
+import { Box, TextField, Button, Typography, Tooltip } from "@mui/material";
+import showMessage from "./showMessage";
 
 interface FormValueType {
   loverAddress: string;
@@ -16,6 +17,9 @@ const ProposalSection: FC = () => {
     loverAddress: "",
     vowsMessage: "",
   });
+  const [displayProposalLinkButton, setDisplayProposalLinkButton] =
+    useState<boolean>(false);
+  const [copiedProposalLink, setCopiedProposalLink] = useState(false);
   const { address, isConnected, isDisconnected } = useAccount();
 
   const handleOnChange = (
@@ -61,6 +65,25 @@ const ProposalSection: FC = () => {
 
   const handleSubmit = () => {
     // TODO: call the smart contract submitProposal function
+    // Once it's successful will show a copy URL button
+    setDisplayProposalLinkButton(true);
+  };
+
+  const handleCopyProposalLink = () => {
+    const proposalLink = `${window.location.origin}/accept-proposal/${value.loverAddress}`;
+    navigator.clipboard
+      .writeText(proposalLink)
+      .then(() => {
+        setCopiedProposalLink(true);
+      })
+      .catch((error) => {
+        setCopiedProposalLink(false);
+        showMessage({
+          title: "Faild to copy",
+          type: "error",
+          body: error.message,
+        });
+      });
   };
 
   return (
@@ -93,7 +116,7 @@ const ProposalSection: FC = () => {
         maxRows={8}
         id="vows-message"
         label="Vows"
-        placeholder="Please bravely express your love to your beloved."
+        placeholder="Please bravely express your love to your lover."
         value={value.vowsMessage}
         onChange={(event) => {
           handleOnChange(event, "vowsMessage");
@@ -110,6 +133,33 @@ const ProposalSection: FC = () => {
       >
         Submit
       </Button>
+      {displayProposalLinkButton && (
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography sx={{ fontSize: "14px", marginBottom: "12px" }}>
+            Please send the proposal link to your lover.
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography
+              sx={{ fontSize: "12px" }}
+            >{`${window.location.origin}/accept-proposal/${value.loverAddress}`}</Typography>
+            <Tooltip
+              open={copiedProposalLink}
+              onClose={() => {
+                setCopiedProposalLink(false);
+              }}
+              title="copied!"
+            >
+              <Button
+                variant="contained"
+                sx={{ width: "40px", fontSize: "12px", marginTop: "8px" }}
+                onClick={handleCopyProposalLink}
+              >
+                Copy
+              </Button>
+            </Tooltip>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };
