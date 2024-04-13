@@ -6,7 +6,8 @@ import { WagmiProvider } from "wagmi";
 import { mainnet, polygon, base } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
-import PageLayout from "../components/pageLayout";
+import PageLayout from "@/components/pageLayout";
+import ProposalSection from "@/components/proposalSection";
 
 import "./globals.css";
 
@@ -24,7 +25,9 @@ function MyApp() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <PageLayout>content</PageLayout>
+          <PageLayout>
+            <ProposalSection />
+          </PageLayout>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
