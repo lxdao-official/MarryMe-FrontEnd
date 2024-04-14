@@ -1,7 +1,10 @@
 import React, { ChangeEvent, FC, useState } from "react";
 import { useAccount } from "wagmi";
+import { Contract } from "ethers";
 import { Box, TextField, Button, Typography, Tooltip } from "@mui/material";
 import styled from "styled-components";
+import contractInfo from "@/utils/contractsOperation";
+import { useEthersSigner } from "@/hooks";
 import showMessage from "./showMessage";
 
 interface FormValueType {
@@ -10,8 +13,26 @@ interface FormValueType {
 }
 
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  & .MuiOutlinedInput-root {
+    background-color: transparent;
+  }
+  & .Mui-focused {
+    color: #f1ecda;
+  }
   & .MuiButton-root:hover {
     background-color: #e5acc2;
+  }
+  & .MuiOutlinedInput-root:hover {
+    border-color: #f1ecda;
+  }
+  & .MuiOutlinedInput-notchedOutline,
+  &:hover .MuiOutlinedInput-notchedOutline,
+  & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #f1ecda;
   }
 `;
 
@@ -28,6 +49,7 @@ const ProposalSection: FC = () => {
     useState<boolean>(false);
   const [copiedProposalLink, setCopiedProposalLink] = useState(false);
   const { address, isConnected, isDisconnected } = useAccount();
+  const signer = useEthersSigner();
 
   const handleOnChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
@@ -70,10 +92,24 @@ const ProposalSection: FC = () => {
     error.loverAddress ||
     error.vowsMessage;
 
-  const handleSubmit = () => {
-    // TODO: call the smart contract submitProposal function
-    // Once it's successful will show a copy URL button
-    setDisplayProposalLinkButton(true);
+  const handleSubmit = async () => {
+    try {
+      const { address: contractAddress, abi } = contractInfo();
+      const contract = new Contract(contractAddress, abi, signer);
+      const res = await contract.submitProposal(
+        value.loverAddress,
+        value.vowsMessage
+      );
+      if (res) {
+        setDisplayProposalLinkButton(true);
+      }
+    } catch (error) {
+      showMessage({
+        title: "Faild to raise the proposal.",
+        type: "error",
+        body: error.message,
+      });
+    }
   };
 
   const handleCopyProposalLink = () => {
@@ -95,12 +131,15 @@ const ProposalSection: FC = () => {
 
   return (
     <Wrapper>
+      <Typography sx={{ fontSize: "28px", textShadow: "5px 5px #e95aab" }}>
+        Propose to your lover
+      </Typography>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           border: "2px solid #f1ecda",
-          maxWidth: "400px",
+          maxWidth: "480px",
           padding: "24px",
           borderRadius: "10px",
           gap: "20px",

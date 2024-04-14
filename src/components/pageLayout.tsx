@@ -7,7 +7,7 @@ import {
   lightTheme,
 } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
-import { mainnet, polygon, base } from "wagmi/chains";
+import { mainnet, polygon, base, sepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 
@@ -21,7 +21,7 @@ interface Props {
 const config = getDefaultConfig({
   appName: "My RainbowKit App",
   projectId: "YOUR_PROJECT_ID",
-  chains: [mainnet, polygon, base],
+  chains: [mainnet, polygon, base, sepolia],
   ssr: true,
 });
 
@@ -80,7 +80,7 @@ const PageLayout: FC<Props> = ({ children }) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  margin: "80px",
+                  margin: "150px 80px 100px 80px",
                 }}
               >
                 {children}
