@@ -1,8 +1,10 @@
+"use client";
 import React, { FC } from "react";
-import { Box, Button, Typography } from "@mui/material";
 
 import PageLayout from "@/components/pageLayout";
 import AcceptProposalSection from "@/components/acceptProposalSection";
+
+import "../../app/globals.css";
 
 const AcceptProposalPage: FC = () => {
   return (

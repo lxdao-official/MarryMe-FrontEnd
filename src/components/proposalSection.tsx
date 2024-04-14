@@ -1,12 +1,19 @@
 import React, { ChangeEvent, FC, useState } from "react";
 import { useAccount } from "wagmi";
 import { Box, TextField, Button, Typography, Tooltip } from "@mui/material";
+import styled from "styled-components";
 import showMessage from "./showMessage";
 
 interface FormValueType {
   loverAddress: string;
   vowsMessage: string;
 }
+
+const Wrapper = styled.div`
+  & .MuiButton-root:hover {
+    background-color: #e5acc2;
+  }
+`;
 
 const ProposalSection: FC = () => {
   const [value, setValue] = useState<FormValueType>({
@@ -87,80 +94,82 @@ const ProposalSection: FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        border: "2px solid #ff7aba",
-        maxWidth: "400px",
-        padding: "24px",
-        borderRadius: "10px",
-        gap: "20px",
-      }}
-    >
-      <TextField
-        id="lover-address"
-        label="My lover address"
-        value={value.loverAddress}
-        onChange={(event) => {
-          handleOnChange(event, "loverAddress");
+    <Wrapper>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          border: "2px solid #f1ecda",
+          maxWidth: "400px",
+          padding: "24px",
+          borderRadius: "10px",
+          gap: "20px",
         }}
-        variant="outlined"
-        error={Boolean(error.loverAddress)}
-        helperText={error.loverAddress}
-        sx={{ width: "350px" }}
-      />
-      <TextField
-        multiline
-        minRows={4}
-        maxRows={8}
-        id="vows-message"
-        label="Vows"
-        placeholder="Please bravely express your love to your lover."
-        value={value.vowsMessage}
-        onChange={(event) => {
-          handleOnChange(event, "vowsMessage");
-        }}
-        variant="outlined"
-        error={Boolean(error.vowsMessage)}
-        helperText={error.vowsMessage}
-        sx={{ width: "350px" }}
-      />
-      <Button
-        variant="contained"
-        disabled={submitButtonDisabled}
-        onClick={handleSubmit}
       >
-        Submit
-      </Button>
-      {displayProposalLinkButton && (
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography sx={{ fontSize: "14px", marginBottom: "12px" }}>
-            Please send the proposal link to your lover.
-          </Typography>
+        <TextField
+          id="lover-address"
+          label="My lover address"
+          value={value.loverAddress}
+          onChange={(event) => {
+            handleOnChange(event, "loverAddress");
+          }}
+          variant="outlined"
+          error={Boolean(error.loverAddress)}
+          helperText={error.loverAddress}
+          sx={{ width: "350px" }}
+        />
+        <TextField
+          multiline
+          minRows={4}
+          maxRows={8}
+          id="vows-message"
+          label="Vows"
+          placeholder="Please bravely express your love to your lover."
+          value={value.vowsMessage}
+          onChange={(event) => {
+            handleOnChange(event, "vowsMessage");
+          }}
+          variant="outlined"
+          error={Boolean(error.vowsMessage)}
+          helperText={error.vowsMessage}
+          sx={{ width: "350px" }}
+        />
+        <Button
+          variant="contained"
+          disabled={submitButtonDisabled}
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
+        {displayProposalLinkButton && (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography
-              sx={{ fontSize: "12px" }}
-            >{`${window.location.origin}/accept-proposal/${value.loverAddress}`}</Typography>
-            <Tooltip
-              open={copiedProposalLink}
-              onClose={() => {
-                setCopiedProposalLink(false);
-              }}
-              title="copied!"
-            >
-              <Button
-                variant="contained"
-                sx={{ width: "40px", fontSize: "12px", marginTop: "8px" }}
-                onClick={handleCopyProposalLink}
+            <Typography sx={{ fontSize: "14px", marginBottom: "12px" }}>
+              Please send the proposal link to your lover.
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography
+                sx={{ fontSize: "12px" }}
+              >{`${window.location.origin}/accept-proposal/${value.loverAddress}`}</Typography>
+              <Tooltip
+                open={copiedProposalLink}
+                onClose={() => {
+                  setCopiedProposalLink(false);
+                }}
+                title="copied!"
               >
-                Copy
-              </Button>
-            </Tooltip>
+                <Button
+                  variant="contained"
+                  sx={{ width: "40px", fontSize: "12px", marginTop: "8px" }}
+                  onClick={handleCopyProposalLink}
+                >
+                  Copy
+                </Button>
+              </Tooltip>
+            </Box>
           </Box>
-        </Box>
-      )}
-    </Box>
+        )}
+      </Box>
+    </Wrapper>
   );
 };
 
