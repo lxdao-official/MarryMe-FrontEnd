@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Contract } from "ethers";
 import { useAccount } from "wagmi";
@@ -25,34 +25,63 @@ const AcceptProposalSection: FC = () => {
   const [rejectedProposal, setRejectedProposal] = useState(false);
   const [proposalSuccess, setProposalSuccess] = useState(false);
   const [attestationLink, setAttestationLink] = useState("");
+  const [receivedProposals, setReceivedProposals] = useState([]);
   const { address, isConnected, isDisconnected } = useAccount();
   const signer = useEthersSigner();
   const pathname = usePathname();
   const proposalReceiver = pathname?.replace("/accept-proposal/", "") || "";
-  // TODO: get sign message from contract
   // TODO: verify if this connected address match the proposal address
   // TODO: if already generated the attestation, just show the marriage certificate
 
-  const handleAcceptProposal = async () => {
-    // TODO: call the contract acceptProposal function
-    // TODO: once it's successful, will show the marriage certificate
-    // try {
-    //   const { address: contractAddress, abi } = contractInfo();
-    //   const contract = new Contract(contractAddress, abi, signer);
-    //   const res = await contract
-    //     .connect(address)
-    //     .confirmProposal(deployer.getAddress(), "Yes, I do.");
-    //   if (res) {
-    setProposalSuccess(true);
-    setAttestationLink("todo");
-    //   }
-    // } catch (error) {
-    //   showMessage({
-    //     title: "Faild to accept the proposal.",
-    //     type: "error",
-    //     body: error.message,
-    //   });
-    // }
+  const { address: contractAddress, abi } = contractInfo();
+  const contract = new Contract(contractAddress, abi, signer);
+
+  useEffect(() => {
+    const getProposalInfo = async () => {
+      if (isConnected && address === proposalReceiver) {
+        try {
+          const info = await contract.getProposalsReceivedBy(proposalReceiver);
+          if (info) {
+            const proposalArray = JSON.parse(JSON.stringify(info, null, 2));
+            const addressArray = proposalArray[0];
+            const messageArray = proposalArray[1];
+
+            const formattedArray = addressArray.map(
+              (item: string, index: number) => {
+                return { address: item, message: messageArray[index] };
+              }
+            );
+
+            setReceivedProposals(formattedArray);
+          }
+        } catch (error) {
+          showMessage({
+            title: "Faild to fetch the received proposals.",
+            type: "error",
+            body: error.message,
+          });
+        }
+      }
+    };
+    getProposalInfo();
+  }, [isConnected]);
+
+  const handleAcceptProposal = async (proposalAddress: string) => {
+    try {
+      const res = await contract
+        .connect(address)
+        .confirmProposal(proposalAddress, "Yes, I do.");
+      if (res) {
+        setProposalSuccess(true);
+        setAttestationLink("todo");
+      }
+    } catch (error) {
+      showMessage({
+        title: "Faild to accept the proposal.",
+        type: "error",
+        body: error.message,
+      });
+    }
   };
 
   const handleRejectProposal = () => {
@@ -127,24 +156,46 @@ const AcceptProposalSection: FC = () => {
               </Typography>
             </Box>
           ) : (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <Typography>
-                Do you accept proposal creator address's proposal?
-              </Typography>
-              <Typography>💌 vows message</Typography>
-              <Box sx={{ display: "flex", gap: "12px" }}>
-                <Button variant="contained" onClick={handleAcceptProposal}>
-                  Yes, I do
-                </Button>
-                <Button
-                  variant="contained"
-                  onClick={handleRejectProposal}
-                  sx={{ backgroundColor: "#e5acc2" }}
-                >
-                  Sorry, I don't
-                </Button>
-              </Box>
-            </Box>
+            <>
+              {receivedProposals &&
+                receivedProposals.map(
+                  (proposal: { address: string; message: string }) => {
+                    return (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "20px",
+                        }}
+                      >
+                        <Typography>
+                          {`Do you accept ${formatAddress(
+                            proposal.address
+                          )}'s proposal?`}
+                        </Typography>
+                        <Typography>💌 {proposal.message}</Typography>
+                        <Box sx={{ display: "flex", gap: "12px" }}>
+                          <Button
+                            variant="contained"
+                            onClick={() => {
+                              handleAcceptProposal(proposal.address);
+                            }}
+                          >
+                            Yes, I do
+                          </Button>
+                          <Button
+                            variant="contained"
+                            onClick={handleRejectProposal}
+                            sx={{ backgroundColor: "#e5acc2" }}
+                          >
+                            Sorry, I don't
+                          </Button>
+                        </Box>
+                      </Box>
+                    );
+                  }
+                )}
+            </>
           )
         ) : (
           <Box>
