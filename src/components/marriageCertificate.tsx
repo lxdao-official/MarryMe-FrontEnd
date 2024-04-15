@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Box, Typography } from "@mui/material";
 
-import { formatAddress } from "@/utils/utility";
+import formatAddress from "@/utils/utility";
 
 interface Props {
   proposalAddress: string;

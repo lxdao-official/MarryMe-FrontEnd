@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { Contract } from "ethers";
 import { useAccount } from "wagmi";
@@ -7,7 +7,7 @@ import { Box, Button, Typography } from "@mui/material";
 
 import MarriageCertificate from "./marriageCertificate";
 import showMessage from "./showMessage";
-import { formatAddress } from "@/utils/utility";
+import formatAddress from "@/utils/utility";
 import contractInfo from "@/utils/contractsOperation";
 import { useEthersSigner } from "@/hooks";
 
@@ -21,68 +21,78 @@ const Wrapper = styled.div`
   }
 `;
 
+const ProposalWrapper = styled.div`
+  & .MuiButton-root:hover {
+    background-color: #e5acc2;
+  }
+`;
+
 const AcceptProposalSection: FC = () => {
   const [rejectedProposal, setRejectedProposal] = useState(false);
   const [proposalSuccess, setProposalSuccess] = useState(false);
   const [attestationLink, setAttestationLink] = useState("");
   const [receivedProposals, setReceivedProposals] = useState([]);
-  const { address, isConnected, isDisconnected } = useAccount();
-  const signer = useEthersSigner();
+  const [loverLettersOpened, setLoverLettersOpened] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { address, isConnected } = useAccount();
+  const signer = useEthersSigner(process.env.NEXT_PUBLIC_CHAIN_ID);
   const pathname = usePathname();
-  const proposalReceiver = pathname?.replace("/accept-proposal/", "") || "";
-  // TODO: verify if this connected address match the proposal address
-  // TODO: if already generated the attestation, just show the marriage certificate
-
+  const proposalReceiver = pathname?.replace("/accept-proposal/", "");
   const { address: contractAddress, abi } = contractInfo();
-  const contract = new Contract(contractAddress, abi, signer);
 
-  useEffect(() => {
-    const getProposalInfo = async () => {
-      if (isConnected && address === proposalReceiver) {
-        try {
-          const info = await contract.getProposalsReceivedBy(proposalReceiver);
-          if (info) {
-            const proposalArray = JSON.parse(JSON.stringify(info, null, 2));
-            const addressArray = proposalArray[0];
-            const messageArray = proposalArray[1];
+  const handleOpenLoveLetters = useCallback(async () => {
+    setLoverLettersOpened(true);
+    setLoading(true);
+    if (isConnected && address === proposalReceiver) {
+      try {
+        const contract = new Contract(contractAddress, abi, signer);
+        const info = await contract.getProposalsReceivedBy(proposalReceiver);
+        if (info) {
+          const proposalArray = JSON.parse(JSON.stringify(info, null, 2));
+          const addressArray = proposalArray[0];
+          const messageArray = proposalArray[1];
 
-            const formattedArray = addressArray.map(
-              (item: string, index: number) => {
-                return { address: item, message: messageArray[index] };
-              }
-            );
-
-            setReceivedProposals(formattedArray);
-          }
-        } catch (error) {
-          showMessage({
-            title: "Faild to fetch the received proposals.",
-            type: "error",
-            body: error.message,
-          });
+          const formattedArray = addressArray.map(
+            (item: string, index: number) => {
+              return { address: item, message: messageArray[index] };
+            }
+          );
+          setLoading(false);
+          setReceivedProposals(formattedArray);
         }
+      } catch (error) {
+        setLoading(false);
+        showMessage({
+          title: "Faild to fetch the received proposals.",
+          type: "error",
+          body: error.message,
+        });
       }
-    };
-    getProposalInfo();
-  }, [isConnected]);
-
-  const handleAcceptProposal = async (proposalAddress: string) => {
-    try {
-      const res = await contract
-        .connect(address)
-        .confirmProposal(proposalAddress, "Yes, I do.");
-      if (res) {
-        setProposalSuccess(true);
-        setAttestationLink("todo");
-      }
-    } catch (error) {
-      showMessage({
-        title: "Faild to accept the proposal.",
-        type: "error",
-        body: error.message,
-      });
     }
-  };
+  }, [isConnected, proposalReceiver, signer]);
+
+  const handleAcceptProposal = useCallback(
+    async (proposalAddress: string, signer: any) => {
+      try {
+        const contract = new Contract(contractAddress, abi, signer);
+        const res = await contract
+          .connect(signer)
+          .confirmProposal(proposalAddress, "Yes, I do.");
+        if (res) {
+          console.log("res: ", res);
+          setProposalSuccess(true);
+          setAttestationLink("todo");
+        }
+      } catch (error) {
+        showMessage({
+          title: "Faild to accept the proposal.",
+          type: "error",
+          body: error.message,
+        });
+      }
+    },
+    []
+  );
 
   const handleRejectProposal = () => {
     setRejectedProposal(true);
@@ -138,11 +148,18 @@ const AcceptProposalSection: FC = () => {
           flexDirection: "column",
           border: "2px solid #f1ecda",
           width: "480px",
+          minHeight: "302px",
           padding: "24px",
           borderRadius: "10px",
           gap: "20px",
+          position: "relative",
         }}
       >
+        {loading && (
+          <div className="heart-wrapper">
+            <div className="envelope-heart" onClick={handleOpenLoveLetters} />
+          </div>
+        )}
         {isConnected && address === proposalReceiver ? (
           rejectedProposal ? (
             <Box>
@@ -150,51 +167,69 @@ const AcceptProposalSection: FC = () => {
                 {`Don't love ${formatAddress(
                   proposalReceiver
                 )}? You may want to make a proposal to the other people, `}
-                <Typography component="a" href="/">
+                <Typography
+                  component="a"
+                  href="/"
+                  sx={{ textDecoration: "underline", cursor: "pointer" }}
+                >
                   let's make it!
                 </Typography>
               </Typography>
             </Box>
           ) : (
             <>
-              {receivedProposals &&
+              {loverLettersOpened ? (
+                receivedProposals &&
                 receivedProposals.map(
                   (proposal: { address: string; message: string }) => {
                     return (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "20px",
-                        }}
-                      >
-                        <Typography>
-                          {`Do you accept ${formatAddress(
-                            proposal.address
-                          )}'s proposal?`}
-                        </Typography>
-                        <Typography>💌 {proposal.message}</Typography>
-                        <Box sx={{ display: "flex", gap: "12px" }}>
-                          <Button
-                            variant="contained"
-                            onClick={() => {
-                              handleAcceptProposal(proposal.address);
-                            }}
-                          >
-                            Yes, I do
-                          </Button>
-                          <Button
-                            variant="contained"
-                            onClick={handleRejectProposal}
-                            sx={{ backgroundColor: "#e5acc2" }}
-                          >
-                            Sorry, I don't
-                          </Button>
+                      <ProposalWrapper>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "20px",
+                          }}
+                        >
+                          <Typography>
+                            {`Do you accept ${formatAddress(
+                              proposal.address
+                            )}'s proposal?`}
+                          </Typography>
+                          <Typography>💌 {proposal.message}</Typography>
+                          <Box sx={{ display: "flex", gap: "12px" }}>
+                            <Button
+                              variant="contained"
+                              onClick={() => {
+                                handleAcceptProposal(proposal.address, signer);
+                              }}
+                            >
+                              Yes, I do
+                            </Button>
+                            <Button
+                              variant="contained"
+                              onClick={handleRejectProposal}
+                              sx={{ backgroundColor: "#e5acc2" }}
+                            >
+                              Sorry, I don't
+                            </Button>
+                          </Box>
                         </Box>
-                      </Box>
+                      </ProposalWrapper>
                     );
                   }
-                )}
+                )
+              ) : (
+                <div className="envelope">
+                  <div className="flap" />
+                  <div className="heart-wrapper">
+                    <div
+                      className="envelope-heart"
+                      onClick={handleOpenLoveLetters}
+                    />
+                  </div>
+                </div>
+              )}
             </>
           )
         ) : (

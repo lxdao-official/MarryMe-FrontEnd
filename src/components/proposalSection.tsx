@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useState } from "react";
+import React, { ChangeEvent, FC, useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { Contract } from "ethers";
 import { Box, TextField, Button, Typography, Tooltip } from "@mui/material";
@@ -48,8 +48,21 @@ const ProposalSection: FC = () => {
   const [displayProposalLinkButton, setDisplayProposalLinkButton] =
     useState<boolean>(false);
   const [copiedProposalLink, setCopiedProposalLink] = useState(false);
+  const [isMarried, setIsMarried] = useState(false);
   const { address, isConnected, isDisconnected } = useAccount();
-  const signer = useEthersSigner();
+  const signer = useEthersSigner(process.env.NEXT_PUBLIC_CHAIN_ID);
+  const { address: contractAddress, abi } = contractInfo();
+
+  useEffect(() => {
+    async function getMarryStatus() {
+      const contract = new Contract(contractAddress, abi, signer);
+      const isMarried = await contract.checkMarried(address);
+      setIsMarried(isMarried);
+    }
+    if (isConnected && address) {
+      getMarryStatus();
+    }
+  }, [isConnected, signer]);
 
   const handleOnChange = (
     event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
@@ -145,67 +158,75 @@ const ProposalSection: FC = () => {
           gap: "20px",
         }}
       >
-        <TextField
-          id="lover-address"
-          label="My lover address"
-          value={value.loverAddress}
-          onChange={(event) => {
-            handleOnChange(event, "loverAddress");
-          }}
-          variant="outlined"
-          error={Boolean(error.loverAddress)}
-          helperText={error.loverAddress}
-          sx={{ width: "350px" }}
-        />
-        <TextField
-          multiline
-          minRows={4}
-          maxRows={8}
-          id="vows-message"
-          label="Vows"
-          placeholder="Please bravely express your love to your lover."
-          value={value.vowsMessage}
-          onChange={(event) => {
-            handleOnChange(event, "vowsMessage");
-          }}
-          variant="outlined"
-          error={Boolean(error.vowsMessage)}
-          helperText={error.vowsMessage}
-          sx={{ width: "350px" }}
-        />
-        <Button
-          variant="contained"
-          disabled={submitButtonDisabled}
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-        {displayProposalLinkButton && (
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ fontSize: "14px", marginBottom: "12px" }}>
-              Please send the proposal link to your lover.
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography
-                sx={{ fontSize: "12px" }}
-              >{`${window.location.origin}/accept-proposal/${value.loverAddress}`}</Typography>
-              <Tooltip
-                open={copiedProposalLink}
-                onClose={() => {
-                  setCopiedProposalLink(false);
-                }}
-                title="copied!"
-              >
-                <Button
-                  variant="contained"
-                  sx={{ width: "40px", fontSize: "12px", marginTop: "8px" }}
-                  onClick={handleCopyProposalLink}
-                >
-                  Copy
-                </Button>
-              </Tooltip>
-            </Box>
-          </Box>
+        {isMarried ? (
+          <Typography sx={{ textAlign: "center" }}>
+            You're already married, you can't get married a second time!
+          </Typography>
+        ) : (
+          <>
+            <TextField
+              id="lover-address"
+              label="My lover address"
+              value={value.loverAddress}
+              onChange={(event) => {
+                handleOnChange(event, "loverAddress");
+              }}
+              variant="outlined"
+              error={Boolean(error.loverAddress)}
+              helperText={error.loverAddress}
+              sx={{ width: "350px" }}
+            />
+            <TextField
+              multiline
+              minRows={4}
+              maxRows={8}
+              id="vows-message"
+              label="Vows"
+              placeholder="Please bravely express your love to your lover."
+              value={value.vowsMessage}
+              onChange={(event) => {
+                handleOnChange(event, "vowsMessage");
+              }}
+              variant="outlined"
+              error={Boolean(error.vowsMessage)}
+              helperText={error.vowsMessage}
+              sx={{ width: "350px" }}
+            />
+            <Button
+              variant="contained"
+              disabled={submitButtonDisabled}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+            {displayProposalLinkButton && (
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ fontSize: "14px", marginBottom: "12px" }}>
+                  Please send the proposal link to your lover.
+                </Typography>
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Typography
+                    sx={{ fontSize: "12px" }}
+                  >{`${window.location.origin}/accept-proposal/${value.loverAddress}`}</Typography>
+                  <Tooltip
+                    open={copiedProposalLink}
+                    onClose={() => {
+                      setCopiedProposalLink(false);
+                    }}
+                    title="copied!"
+                  >
+                    <Button
+                      variant="contained"
+                      sx={{ width: "40px", fontSize: "12px", marginTop: "8px" }}
+                      onClick={handleCopyProposalLink}
+                    >
+                      Copy
+                    </Button>
+                  </Tooltip>
+                </Box>
+              </Box>
+            )}
+          </>
         )}
       </Box>
     </Wrapper>

@@ -1,9 +1,10 @@
 import React from "react";
-import { useWalletClient } from "wagmi";
 import { BrowserProvider, JsonRpcSigner } from "ethers";
+import { useWalletClient } from "wagmi";
 
 export function walletClientToSigner(walletClient: any) {
   const { account, chain, transport } = walletClient;
+  console.log("chain: ", chain);
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -14,8 +15,10 @@ export function walletClientToSigner(walletClient: any) {
   return signer;
 }
 
-export function useEthersSigner({ chainId } = {}) {
-  const { data: walletClient } = useWalletClient({ chainId });
+export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
+  const { data: walletClient } = useWalletClient({
+    chainId,
+  });
   return React.useMemo(
     () => (walletClient ? walletClientToSigner(walletClient) : undefined),
     [walletClient]
