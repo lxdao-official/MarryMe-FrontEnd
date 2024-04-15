@@ -196,11 +196,18 @@ const ProposalSection: FC = () => {
               variant="contained"
               disabled={submitButtonDisabled}
               onClick={handleSubmit}
+              sx={{ maxWidth: "350px" }}
             >
               Submit
             </Button>
             {displayProposalLinkButton && (
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxWidth: "350px",
+                }}
+              >
                 <Typography sx={{ fontSize: "14px", marginBottom: "12px" }}>
                   Please send the proposal link to your lover.
                 </Typography>
