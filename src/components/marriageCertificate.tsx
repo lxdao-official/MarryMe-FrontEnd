@@ -47,8 +47,13 @@ const MarriageCertificate: FC<Props> = ({
       </Typography>
       <Typography sx={{ textAlign: "center" }}>
         Please check your on-chain marriage attestation:
-        <Typography target="__blank" component="a" href={attestationLink}>
-          {attestationLink}
+        <Typography
+          sx={{ textDecoration: "underline", cursor: "pointer" }}
+          target="__blank"
+          component="a"
+          href={attestationLink}
+        >
+          click here
         </Typography>
       </Typography>
     </Box>
