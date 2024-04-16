@@ -6,7 +6,8 @@ import styled from "@emotion/styled";
 import ErrorIcon from "@mui/icons-material/Error";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InfoIcon from "@mui/icons-material/Info";
-
+ import { createRoot } from "react-dom";
+ 
 const IconWrapper = styled.div``;
 
 const DialogWrapper = styled.div`
@@ -82,8 +83,10 @@ function showMessage(options: Props) {
   const { title, body, type } = options;
   const container = document.createDocumentFragment();
 
+ 
+
   function render({ visible }) {
-    ReactDOM.render(
+    createRoot(
       <SimpleModal
         title={title}
         visible={visible}

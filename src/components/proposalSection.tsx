@@ -168,7 +168,8 @@ const ProposalSection: FC = () => {
       >
         {isMarried ? (
           <Typography sx={{ textAlign: "center" }}>
-            You're already married, you can't get married a second time!
+            You&apos;re already married, you can&apos;t get married a second
+            time!
           </Typography>
         ) : (
           <>

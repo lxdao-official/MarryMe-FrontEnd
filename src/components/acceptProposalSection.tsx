@@ -185,7 +185,7 @@ const AcceptProposalSection: FC = () => {
                   href="/"
                   sx={{ textDecoration: "underline", cursor: "pointer" }}
                 >
-                  let's make it!
+                  let&apos;s make it!
                 </Typography>
               </Typography>
             </Box>
@@ -196,7 +196,7 @@ const AcceptProposalSection: FC = () => {
                 receivedProposals.map(
                   (proposal: { address: string; message: string }) => {
                     return (
-                      <ProposalWrapper>
+                      <ProposalWrapper key={address}>
                         <Box
                           sx={{
                             display: "flex",
@@ -224,7 +224,7 @@ const AcceptProposalSection: FC = () => {
                               onClick={handleRejectProposal}
                               sx={{ backgroundColor: "#e5acc2" }}
                             >
-                              Sorry, I don't
+                              Sorry, I don&apos;t
                             </Button>
                           </Box>
                         </Box>
