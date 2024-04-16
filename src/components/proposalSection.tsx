@@ -15,7 +15,6 @@ interface FormValueType {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
   align-items: center;
   & .MuiOutlinedInput-root {
     background-color: transparent;
@@ -61,6 +60,8 @@ const ProposalSection: FC = () => {
     }
     if (isConnected && address) {
       getMarryStatus();
+    } else {
+      setIsMarried(false);
     }
   }, [isConnected, signer]);
 
@@ -144,7 +145,14 @@ const ProposalSection: FC = () => {
 
   return (
     <Wrapper>
-      <Typography sx={{ fontSize: "28px", textShadow: "5px 5px #e95aab" }}>
+      <Typography
+        sx={{
+          fontSize: "28px",
+          textShadow: "5px 5px #e95aab",
+          marginBottom: "12px",
+          textAlign: "center",
+        }}
+      >
         Propose to your lover
       </Typography>
       <Box

@@ -46,7 +46,7 @@ const MarriageCertificate: FC<Props> = ({
         exclusively yours!
       </Typography>
       <Typography sx={{ textAlign: "center" }}>
-        Please check your on-chain marriage attestation:
+        Please check your on-chain marriage attestation:{" "}
         <Typography
           sx={{ textDecoration: "underline", cursor: "pointer" }}
           target="__blank"

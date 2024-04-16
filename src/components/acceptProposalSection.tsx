@@ -14,7 +14,6 @@ import { useEthersSigner } from "@/hooks";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
   align-items: center;
   & .MuiButton-root:hover {
     background-color: #e5acc2;
@@ -79,12 +78,15 @@ const AcceptProposalSection: FC = () => {
           .connect(signer)
           .confirmProposal(proposalAddress, "Yes, I do.");
         await res.wait();
-        const attestationID = await contract.getAttestationID(proposalAddress);
+        const attestationID = await contract.getMarryAttestationId(
+          proposalAddress
+        );
         if (attestationID) {
-          console.log("attestationID: ", attestationID);
           setProposalSuccess(true);
           setAttestationLink(
-            `${process.env.NEXT_PUBLIC_ATTESTATION_URL}${attestationID}`
+            `${
+              process.env.NEXT_PUBLIC_ATTESTATION_URL
+            }0x${attestationID.toString(16)}`
           );
         }
       } catch (error) {
@@ -143,7 +145,14 @@ const AcceptProposalSection: FC = () => {
 
   return (
     <Wrapper>
-      <Typography sx={{ fontSize: "28px", textShadow: "5px 5px #e95aab" }}>
+      <Typography
+        sx={{
+          fontSize: "28px",
+          textShadow: "5px 5px #e95aab",
+          textAlign: "center",
+          marginBottom: "12px",
+        }}
+      >
         Proposal I received
       </Typography>
       <Box
