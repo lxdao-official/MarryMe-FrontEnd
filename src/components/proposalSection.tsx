@@ -49,12 +49,12 @@ const ProposalSection: FC = () => {
   const [copiedProposalLink, setCopiedProposalLink] = useState(false);
   const [isMarried, setIsMarried] = useState(false);
   const { address, isConnected, isDisconnected } = useAccount();
-  const signer = useEthersSigner(process.env.NEXT_PUBLIC_CHAIN_ID);
+  const signer = useEthersSigner(process.env.NEXT_PUBLIC_CHAIN_ID!);
   const { address: contractAddress, abi } = contractInfo();
 
   useEffect(() => {
     async function getMarryStatus() {
-      const contract = new Contract(contractAddress, abi, signer);
+      const contract = new Contract(contractAddress!, abi, signer);
       const isMarried = await contract.checkMarried(address);
       setIsMarried(isMarried);
     }

@@ -34,7 +34,7 @@ const AcceptProposalSection: FC = () => {
   const [loverLettersOpened, setLoverLettersOpened] = useState(false);
   const [loading, setLoading] = useState(false);
   const { address, isConnected } = useAccount();
-  const signer = useEthersSigner(process.env.NEXT_PUBLIC_CHAIN_ID);
+  const signer = useEthersSigner(process.env.NEXT_PUBLIC_CHAIN_ID!);
   const pathname = usePathname();
   const proposalReceiver = pathname?.replace("/accept-proposal/", "");
   const { address: contractAddress, abi } = contractInfo();
@@ -44,7 +44,7 @@ const AcceptProposalSection: FC = () => {
     setLoading(true);
     if (isConnected && address === proposalReceiver) {
       try {
-        const contract = new Contract(contractAddress, abi, signer);
+        const contract = new Contract(contractAddress!, abi, signer);
         const info = await contract.getProposalsReceivedBy(proposalReceiver);
         if (info) {
           const proposalArray = JSON.parse(JSON.stringify(info, null, 2));
