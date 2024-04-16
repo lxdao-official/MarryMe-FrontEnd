@@ -79,11 +79,12 @@ const AcceptProposalSection: FC = () => {
           .connect(signer)
           .confirmProposal(proposalAddress, "Yes, I do.");
         await res.wait();
-        if (res) {
-          console.log("res: ", res);
+        const attestationID = await contract.getAttestationID(proposalAddress);
+        if (attestationID) {
+          console.log("attestationID: ", attestationID);
           setProposalSuccess(true);
           setAttestationLink(
-            `${process.env.NEXT_PUBLIC_ATTESTATION_URL}${res.attestationID}`
+            `${process.env.NEXT_PUBLIC_ATTESTATION_URL}${attestationID}`
           );
         }
       } catch (error) {
