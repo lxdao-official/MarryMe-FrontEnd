@@ -35,7 +35,7 @@ const AcceptProposalSection: FC = () => {
   const [loading, setLoading] = useState(false);
   const { address, isConnected } = useAccount();
   const signer = useEthersSigner({
-    chainId: process.env.NEXT_PUBLIC_CHAIN_ID!,
+    chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID!),
   });
   const pathname = usePathname();
   const proposalReceiver = pathname?.replace("/accept-proposal/", "");
@@ -61,7 +61,7 @@ const AcceptProposalSection: FC = () => {
           setLoading(false);
           setReceivedProposals(formattedArray);
         }
-      } catch (error) {
+      } catch (error:any) {
         setLoading(false);
         showMessage({
           title: "Faild to fetch the received proposals.",
@@ -75,7 +75,7 @@ const AcceptProposalSection: FC = () => {
   const handleAcceptProposal = useCallback(
     async (proposalAddress: string, signer: any) => {
       try {
-        const contract = new Contract(contractAddress, abi, signer);
+        const contract = new Contract(contractAddress!, abi, signer);
         const res = await contract
           .connect(signer)
           .confirmProposal(proposalAddress, "Yes, I do.");
@@ -91,7 +91,7 @@ const AcceptProposalSection: FC = () => {
             }0x${attestationID.toString(16)}`
           );
         }
-      } catch (error) {
+      } catch (error:any) {
         showMessage({
           title: "Faild to accept the proposal.",
           type: "error",
@@ -136,7 +136,7 @@ const AcceptProposalSection: FC = () => {
           }}
         >
           <MarriageCertificate
-            proposalAddress={proposalReceiver}
+            proposalAddress={proposalReceiver!}
             recipientAddress={address}
             attestationLink={attestationLink}
           />
@@ -180,7 +180,7 @@ const AcceptProposalSection: FC = () => {
             <Box>
               <Typography>
                 {`Don't love ${formatAddress(
-                  proposalReceiver
+                  proposalReceiver!
                 )}? You may want to make a proposal to the other people, `}
                 <Typography
                   component="a"

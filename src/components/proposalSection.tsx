@@ -49,7 +49,9 @@ const ProposalSection: FC = () => {
   const [copiedProposalLink, setCopiedProposalLink] = useState(false);
   const [isMarried, setIsMarried] = useState(false);
   const { address, isConnected, isDisconnected } = useAccount();
-  const signer = useEthersSigner(process.env.NEXT_PUBLIC_CHAIN_ID!);
+  const signer = useEthersSigner({
+    chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID!),
+  });
   const { address: contractAddress, abi } = contractInfo();
 
   useEffect(() => {
@@ -70,7 +72,7 @@ const ProposalSection: FC = () => {
     fieldName: string
   ) => {
     const newValue: string = event.target.value;
-    const cloneValue = Object.assign({}, value);
+    const cloneValue: any = Object.assign({}, value);
     const cloneError = Object.assign({}, error);
     cloneValue[fieldName] = newValue;
     setValue(cloneValue);
@@ -109,7 +111,7 @@ const ProposalSection: FC = () => {
   const handleSubmit = async () => {
     try {
       const { address: contractAddress, abi } = contractInfo();
-      const contract = new Contract(contractAddress, abi, signer);
+      const contract = new Contract(contractAddress!, abi, signer);
       const res = await contract.submitProposal(
         value.loverAddress,
         value.vowsMessage
@@ -117,7 +119,7 @@ const ProposalSection: FC = () => {
       if (res) {
         setDisplayProposalLinkButton(true);
       }
-    } catch (error) {
+    } catch (error:any) {
       showMessage({
         title: "Faild to raise the proposal.",
         type: "error",
@@ -203,7 +205,7 @@ const ProposalSection: FC = () => {
             />
             <Button
               variant="contained"
-              disabled={submitButtonDisabled}
+              disabled={!!submitButtonDisabled}
               onClick={handleSubmit}
               sx={{ maxWidth: "350px" }}
             >

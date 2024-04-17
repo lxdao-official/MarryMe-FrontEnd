@@ -6,8 +6,9 @@ import styled from "@emotion/styled";
 import ErrorIcon from "@mui/icons-material/Error";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import InfoIcon from "@mui/icons-material/Info";
- import { createRoot } from "react-dom";
- 
+import { createRoot } from "react-dom/client";
+
+
 const IconWrapper = styled.div``;
 
 const DialogWrapper = styled.div`
@@ -38,7 +39,7 @@ const SimpleModal: FC<Props> = (props) => {
   const { onClose, visible, type, title, body } = props;
 
   return (
-    <Dialog onClose={onClose} open={visible}>
+    <Dialog onClose={onClose} open={!!visible}>
       <DialogWrapper>
         <Box paddingX={1}>
           <Box display="flex" alignItems="center" gap="8px">
@@ -85,16 +86,15 @@ function showMessage(options: Props) {
 
  
 
-  function render({ visible }) {
-    createRoot(
+  function render({ visible }:any) {
+    createRoot(container).render(
       <SimpleModal
         title={title}
         visible={visible}
         body={body}
         type={type}
         onClose={close}
-      />,
-      container
+      />
     );
   }
 
