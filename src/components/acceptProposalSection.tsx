@@ -78,6 +78,7 @@ const AcceptProposalSection: FC = () => {
         const contract = new Contract(contractAddress!, abi, signer);
         const res = await contract
           .connect(signer)
+          //@ts-ignore
           .confirmProposal(proposalAddress, "Yes, I do.");
         await res.wait();
         const attestationID = await contract.getMarryAttestationId(
