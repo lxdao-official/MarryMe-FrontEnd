@@ -41,7 +41,7 @@ const Footer: FC = () => {
           <Typography sx={{ marginTop: "8px" }}>
             © 2024,{" "}
             <Typography component="a" href="/">
-              MerryMe
+              MarryMe
             </Typography>{" "}
             ♡{" "}
             <Typography

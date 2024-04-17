@@ -188,7 +188,9 @@ const AcceptProposalSection: FC = () => {
           marginBottom: "12px",
         }}
       >
-        Proposal I received
+        {loverLettersOpened && receivedProposals
+          ? "Proposal I received"
+          : "Open Your Love Letter"}
       </Typography>
       <ContentWrapper>
         {loading && (
