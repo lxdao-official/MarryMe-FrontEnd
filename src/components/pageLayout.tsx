@@ -1,4 +1,6 @@
-import React, { FC } from "react";
+"use client";
+import React, { FC, useState } from "react";
+import { useServerInsertedHTML } from "next/navigation";
 import Box from "@mui/material/Box";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
@@ -9,7 +11,8 @@ import {
 import { WagmiProvider } from "wagmi";
 import { mainnet, polygon, base, sepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import styled, { ServerStyleSheet, StyleSheetManager } from "styled-components";
 
 import Header from "./header";
 import Footer from "./footer";
@@ -19,13 +22,23 @@ interface Props {
 }
 
 const config = getDefaultConfig({
-  appName: "My RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
+  appName: "MarryMe",
+  projectId: "MARRY_ME",
   chains: [mainnet, polygon, base, sepolia],
   ssr: true,
 });
 
 const queryClient = new QueryClient();
+
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 150px 80px 100px 80px;
+  @media screen and (max-width: 600px) {
+    margin: 100px 24px 80px 24px;
+  }
+`;
 
 const theme = createTheme({
   components: {
@@ -61,6 +74,14 @@ const theme = createTheme({
 });
 
 const PageLayout: FC<Props> = ({ children }) => {
+  const [styledComponentsStyleSheet] = useState(() => new ServerStyleSheet());
+
+  useServerInsertedHTML(() => {
+    const styles = styledComponentsStyleSheet.getStyleElement();
+    styledComponentsStyleSheet.instance.clearTag();
+    return styles;
+  });
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -73,20 +94,13 @@ const PageLayout: FC<Props> = ({ children }) => {
           })}
         >
           <ThemeProvider theme={theme}>
-            <Box>
-              <Header />
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "150px 80px 100px 80px",
-                }}
-              >
-                {children}
+            <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
+              <Box>
+                <Header />
+                <Wrapper>{children}</Wrapper>
+                <Footer />
               </Box>
-              <Footer />
-            </Box>
+            </StyleSheetManager>
           </ThemeProvider>
         </RainbowKitProvider>
       </QueryClientProvider>

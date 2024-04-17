@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import PageLayout from "@/components/pageLayout";
 import AcceptProposalSection from "@/components/acceptProposalSection";
 
-import "../../app/globals.css";
+import "../../globals.css";
 
 const AcceptProposalPage: FC = () => {
   return (

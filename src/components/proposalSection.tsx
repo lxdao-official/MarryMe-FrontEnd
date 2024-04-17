@@ -35,6 +35,20 @@ const Wrapper = styled.div`
   }
 `;
 
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #f1ecda;
+  width: 480px;
+  padding: 24px;
+  border-radius: 10px;
+  gap: 20px;
+  @media screen and (max-width: 600px) {
+    width: 340px;
+    padding: 20px;
+  }
+`;
+
 const ProposalSection: FC = () => {
   const [value, setValue] = useState<FormValueType>({
     loverAddress: "",
@@ -119,7 +133,7 @@ const ProposalSection: FC = () => {
       if (res) {
         setDisplayProposalLinkButton(true);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       showMessage({
         title: "Faild to raise the proposal.",
         type: "error",
@@ -157,17 +171,7 @@ const ProposalSection: FC = () => {
       >
         Propose to your lover
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          border: "2px solid #f1ecda",
-          maxWidth: "480px",
-          padding: "24px",
-          borderRadius: "10px",
-          gap: "20px",
-        }}
-      >
+      <ContentWrapper>
         {isMarried ? (
           <Typography sx={{ textAlign: "center" }}>
             You&apos;re already married, you can&apos;t get married a second
@@ -185,7 +189,7 @@ const ProposalSection: FC = () => {
               variant="outlined"
               error={Boolean(error.loverAddress)}
               helperText={error.loverAddress}
-              sx={{ width: "350px" }}
+              sx={{ width: "100%" }}
             />
             <TextField
               multiline
@@ -201,13 +205,13 @@ const ProposalSection: FC = () => {
               variant="outlined"
               error={Boolean(error.vowsMessage)}
               helperText={error.vowsMessage}
-              sx={{ width: "350px" }}
+              sx={{ width: "100%" }}
             />
             <Button
               variant="contained"
               disabled={!!submitButtonDisabled}
               onClick={handleSubmit}
-              sx={{ maxWidth: "350px" }}
+              sx={{ maxWidth: "100%" }}
             >
               Submit
             </Button>
@@ -216,7 +220,7 @@ const ProposalSection: FC = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  maxWidth: "350px",
+                  width: "100%",
                 }}
               >
                 <Typography sx={{ fontSize: "14px", marginBottom: "12px" }}>
@@ -224,7 +228,7 @@ const ProposalSection: FC = () => {
                 </Typography>
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                   <Typography
-                    sx={{ fontSize: "12px" }}
+                    sx={{ fontSize: "12px", wordBreak: "break-word" }}
                   >{`${window.location.origin}/accept-proposal/${value.loverAddress}`}</Typography>
                   <Tooltip
                     open={copiedProposalLink}
@@ -246,7 +250,7 @@ const ProposalSection: FC = () => {
             )}
           </>
         )}
-      </Box>
+      </ContentWrapper>
     </Wrapper>
   );
 };

@@ -20,6 +20,48 @@ const Wrapper = styled.div`
   }
 `;
 
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #f1ecda;
+  width: 480px;
+  min-height: 200px;
+  padding: 24px;
+  border-radius: 10px;
+  gap: 20px;
+  position: relative;
+  & .marriage-address {
+    font-size: 24px;
+  }
+  & .marriage-icon {
+    font-size: 30px;
+  }
+  @media screen and (max-width: 600px) {
+    width: 340px;
+    padding: 20px;
+
+    & .marriage-address {
+      font-size: 18px;
+    }
+    & .marriage-icon {
+      font-size: 24px;
+    }
+
+    & .envelope {
+      width: 100%;
+      height: 250px;
+      border: 2px solid #f1ecda;
+      position: relative;
+    }
+
+    & .flap {
+      border-left: 146px solid transparent;
+      border-right: 146px solid transparent;
+      border-top: 125px solid #f1ecda;
+    }
+  }
+`;
+
 const ProposalWrapper = styled.div`
   & .MuiButton-root:hover {
     background-color: #e5acc2;
@@ -61,7 +103,7 @@ const AcceptProposalSection: FC = () => {
           setLoading(false);
           setReceivedProposals(formattedArray);
         }
-      } catch (error:any) {
+      } catch (error: any) {
         setLoading(false);
         showMessage({
           title: "Faild to fetch the received proposals.",
@@ -92,7 +134,7 @@ const AcceptProposalSection: FC = () => {
             }0x${attestationID.toString(16)}`
           );
         }
-      } catch (error:any) {
+      } catch (error: any) {
         showMessage({
           title: "Faild to accept the proposal.",
           type: "error",
@@ -125,23 +167,13 @@ const AcceptProposalSection: FC = () => {
         >
           Congratulations!
         </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            border: "2px solid #f1ecda",
-            width: "480px",
-            padding: "24px",
-            borderRadius: "10px",
-            gap: "20px",
-          }}
-        >
+        <ContentWrapper>
           <MarriageCertificate
             proposalAddress={proposalReceiver!}
             recipientAddress={address}
             attestationLink={attestationLink}
           />
-        </Box>
+        </ContentWrapper>
       </Box>
     );
   }
@@ -158,19 +190,7 @@ const AcceptProposalSection: FC = () => {
       >
         Proposal I received
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          border: "2px solid #f1ecda",
-          width: "480px",
-          minHeight: "302px",
-          padding: "24px",
-          borderRadius: "10px",
-          gap: "20px",
-          position: "relative",
-        }}
-      >
+      <ContentWrapper>
         {loading && (
           <div className="heart-wrapper">
             <div className="envelope-heart" onClick={handleOpenLoveLetters} />
@@ -256,7 +276,7 @@ const AcceptProposalSection: FC = () => {
             >{`Your receiving address is: ${proposalReceiver}`}</Typography>
           </Box>
         )}
-      </Box>
+      </ContentWrapper>
     </Wrapper>
   );
 };

@@ -32,11 +32,11 @@ const MarriageCertificate: FC<Props> = ({
           gap: "24px",
         }}
       >
-        <Typography sx={{ fontSize: "24px" }}>
+        <Typography className="marriage-address">
           {formatAddress(proposalAddress)}
         </Typography>
-        <Typography sx={{ fontSize: "30px" }}>💗</Typography>
-        <Typography sx={{ fontSize: "24px" }}>
+        <Typography className="marriage-icon">💗</Typography>
+        <Typography className="marriage-address">
           {formatAddress(recipientAddress)}
         </Typography>
       </Box>
