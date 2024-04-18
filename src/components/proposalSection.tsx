@@ -60,9 +60,9 @@ const ProposalSection: FC = () => {
   });
   const [displayProposalLinkButton, setDisplayProposalLinkButton] =
     useState<boolean>(false);
-  const [copiedProposalLink, setCopiedProposalLink] = useState(false);
-  const [isMarried, setIsMarried] = useState(false);
-  const { address, isConnected, isDisconnected } = useAccount();
+  const [copiedProposalLink, setCopiedProposalLink] = useState<boolean>(false);
+  const [isMarried, setIsMarried] = useState<boolean>(false);
+  const { address, isConnected } = useAccount();
   const signer = useEthersSigner({
     chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID!),
   });
@@ -100,7 +100,7 @@ const ProposalSection: FC = () => {
     if (fieldName === "vowsMessage") {
       cloneError.vowsMessage = isValidVows(newValue)
         ? ""
-        : "The length of the vows must be greater than 0 and less than 100";
+        : "The length of the love letter must be greater than 0 and less than 100";
     }
 
     setError(cloneError);
@@ -135,7 +135,7 @@ const ProposalSection: FC = () => {
       }
     } catch (error: any) {
       showMessage({
-        title: "Faild to raise the proposal.",
+        title: "Faild to propose.",
         type: "error",
         body: error.message,
       });
@@ -152,7 +152,7 @@ const ProposalSection: FC = () => {
       .catch((error) => {
         setCopiedProposalLink(false);
         showMessage({
-          title: "Faild to copy",
+          title: "Faild to copy the proposal link.",
           type: "error",
           body: error.message,
         });
@@ -169,19 +169,18 @@ const ProposalSection: FC = () => {
           textAlign: "center",
         }}
       >
-        Propose to your lover
+        PROPOSE TO YOUR LOVER
       </Typography>
       <ContentWrapper>
         {isMarried ? (
           <Typography sx={{ textAlign: "center" }}>
-            You&apos;re already married, you can&apos;t get married a second
-            time!
+            {`You're already married, so you can't propose again.`}
           </Typography>
         ) : (
           <>
             <TextField
               id="lover-address"
-              label="My lover address"
+              label="Your lover address"
               value={value.loverAddress}
               onChange={(event) => {
                 handleOnChange(event, "loverAddress");
@@ -196,7 +195,7 @@ const ProposalSection: FC = () => {
               minRows={4}
               maxRows={8}
               id="vows-message"
-              label="Vows"
+              label="Love letter"
               placeholder="Please bravely express your love to your lover."
               value={value.vowsMessage}
               onChange={(event) => {

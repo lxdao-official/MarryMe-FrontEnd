@@ -4,7 +4,6 @@ import { useWalletClient } from "wagmi";
 
 export function walletClientToSigner(walletClient: any) {
   const { account, chain, transport } = walletClient;
-  console.log("chain: ", chain);
   const network = {
     chainId: chain.id,
     name: chain.name,

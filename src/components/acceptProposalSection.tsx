@@ -7,6 +7,7 @@ import { Box, Button, Typography } from "@mui/material";
 
 import MarriageCertificate from "./marriageCertificate";
 import showMessage from "./showMessage";
+import Loading from "./loading";
 import formatAddress from "@/utils/utility";
 import contractInfo from "@/utils/contractsOperation";
 import { useEthersSigner } from "@/hooks";
@@ -75,6 +76,7 @@ const AcceptProposalSection: FC = () => {
   const [receivedProposals, setReceivedProposals] = useState([]);
   const [loverLettersOpened, setLoverLettersOpened] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [acceptLoading, setAcceptLoading] = useState(false);
   const { address, isConnected } = useAccount();
   const signer = useEthersSigner({
     chainId: Number(process.env.NEXT_PUBLIC_CHAIN_ID!),
@@ -117,6 +119,7 @@ const AcceptProposalSection: FC = () => {
   const handleAcceptProposal = useCallback(
     async (proposalAddress: string, signer: any) => {
       try {
+        setAcceptLoading(true);
         const contract = new Contract(contractAddress!, abi, signer);
         const res = await contract
           .connect(signer)
@@ -127,6 +130,7 @@ const AcceptProposalSection: FC = () => {
           proposalAddress
         );
         if (attestationID) {
+          setAcceptLoading(false);
           setProposalSuccess(true);
           setAttestationLink(
             `${
@@ -135,6 +139,7 @@ const AcceptProposalSection: FC = () => {
           );
         }
       } catch (error: any) {
+        setAcceptLoading(false);
         showMessage({
           title: "Faild to accept the proposal.",
           type: "error",
@@ -165,7 +170,7 @@ const AcceptProposalSection: FC = () => {
             textShadow: "5px 5px #e95aab",
           }}
         >
-          Congratulations!
+          CONGRATULATIONS!
         </Typography>
         <ContentWrapper>
           <MarriageCertificate
@@ -189,28 +194,24 @@ const AcceptProposalSection: FC = () => {
         }}
       >
         {loverLettersOpened && receivedProposals
-          ? "Proposal I received"
-          : "Open Your Love Letter"}
+          ? "PROPOSAL I RECEIVED"
+          : "OPEN YOUR LOVE LETTER"}
       </Typography>
       <ContentWrapper>
-        {loading && (
-          <div className="heart-wrapper">
-            <div className="envelope-heart" onClick={handleOpenLoveLetters} />
-          </div>
-        )}
+        {loading && <Loading />}
         {isConnected && address === proposalReceiver ? (
           rejectedProposal ? (
             <Box>
               <Typography>
                 {`Don't love ${formatAddress(
                   proposalReceiver!
-                )}? You may want to make a proposal to the other people, `}
+                )}? You may want to propose to your true love, `}
                 <Typography
                   component="a"
                   href="/"
                   sx={{ textDecoration: "underline", cursor: "pointer" }}
                 >
-                  let&apos;s make it!
+                  {`let's do it!`}
                 </Typography>
               </Typography>
             </Box>
@@ -238,18 +239,20 @@ const AcceptProposalSection: FC = () => {
                           <Box sx={{ display: "flex", gap: "12px" }}>
                             <Button
                               variant="contained"
+                              disabled={acceptLoading}
                               onClick={() => {
                                 handleAcceptProposal(proposal.address, signer);
                               }}
                             >
-                              Yes, I do
+                              {acceptLoading ? "Processing..." : "Yes, I do"}
                             </Button>
                             <Button
                               variant="contained"
+                              disabled={acceptLoading}
                               onClick={handleRejectProposal}
                               sx={{ backgroundColor: "#e5acc2" }}
                             >
-                              Sorry, I don&apos;t
+                              {`Sorry, I don't`}
                             </Button>
                           </Box>
                         </Box>
@@ -272,7 +275,7 @@ const AcceptProposalSection: FC = () => {
           )
         ) : (
           <Box>
-            <Typography>{`Please connect your wallet to check the love letters from your admirer(s).`}</Typography>
+            <Typography>{`Please connect your wallet to check the love letter from your admirer(s).`}</Typography>
             <Typography
               sx={{ fontSize: "12px", marginTop: "15px" }}
             >{`Your receiving address is: ${proposalReceiver}`}</Typography>
