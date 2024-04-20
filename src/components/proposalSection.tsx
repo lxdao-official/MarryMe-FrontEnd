@@ -1,3 +1,4 @@
+"use client";
 import React, { ChangeEvent, FC, useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { Contract } from "ethers";
@@ -16,23 +17,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  & .MuiOutlinedInput-root {
-    background-color: transparent;
-  }
-  & .Mui-focused {
-    color: #f1ecda;
-  }
-  & .MuiButton-root:hover {
-    background-color: #e5acc2;
-  }
-  & .MuiOutlinedInput-root:hover {
-    border-color: #f1ecda;
-  }
-  & .MuiOutlinedInput-notchedOutline,
-  &:hover .MuiOutlinedInput-notchedOutline,
-  & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #f1ecda;
-  }
 `;
 
 const ContentWrapper = styled.div`
@@ -43,6 +27,7 @@ const ContentWrapper = styled.div`
   padding: 24px;
   border-radius: 10px;
   gap: 20px;
+
   @media screen and (max-width: 600px) {
     width: 340px;
     padding: 20px;
@@ -160,7 +145,7 @@ const ProposalSection: FC = () => {
   };
 
   return (
-    <Wrapper>
+    <Wrapper className="proposal-section-wrapper">
       <Typography
         sx={{
           fontSize: "28px",
